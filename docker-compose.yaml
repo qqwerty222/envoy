@@ -1,0 +1,48 @@
+version: '3.8'
+
+networks:
+  website-net:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/16
+          gateway: 172.20.0.1
+    
+services:
+  envoy:
+    image: envoyproxy/envoy:v1.25-latest
+    container_name: envoy
+    ports:
+      - 10000:10000
+    volumes:
+      - ./envoy.yaml:/etc/envoy/envoy.yaml
+    networks:
+      website-net:
+        ipv4_address: 172.20.0.10
+
+  website-1:
+    build: test_website
+    container_name: ws-1
+    ports:
+      - 8001:8000
+    networks:
+      website-net:
+        ipv4_address: 172.20.0.11
+
+  website-2:
+    build: test_website
+    container_name: ws-2
+    ports:
+      - 8002:8000
+    networks:
+      website-net:
+        ipv4_address: 172.20.0.12
+
+  website-3:
+    build: test_website
+    container_name: ws-3
+    ports:
+      - 8003:8000
+    networks:
+      website-net:
+        ipv4_address: 172.20.0.13
