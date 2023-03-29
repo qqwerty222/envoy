@@ -12,10 +12,12 @@ services:
   envoy:
     image: envoyproxy/envoy:v1.25-latest
     container_name: envoy
-    ports:
-      - 10000:10000
+    hostname: envoy
     volumes:
       - ./envoy.yaml:/etc/envoy/envoy.yaml
+    ports:
+      - 9901:9901
+      - 80:80
     networks:
       website-net:
         ipv4_address: 172.20.0.10
