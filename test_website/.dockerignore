@@ -1,5 +1,0 @@
-env
-.pytest_cache
-
-flaskr/__pycache__
-flaskr/.pytest_cache

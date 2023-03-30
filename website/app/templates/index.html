@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Main{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+    <article class="post">
+        <header> 
+            <div>
+                <h1> Efficiency/month</h1>
+            </div>
+        </header>
+        <p class="body"> 
+            <table style="width:80%"">
+                <tr>
+                    <th> id </th>
+                    <th style="width:30%">Name</th>
+                    <th style="width:20%">Team</th>
+                    <th style="width:15%">Tasks received</th>
+                    <th style="width:15%">Tasks in progress</th>
+                    <th style="width:15%">Tasks finished</th>
+                    <th>Coverage</th>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>Frank</td>
+                    <td>Lotus</td>
+                    <td>30</td>
+                    <td>10</td>
+                    <td>20</td>
+                    <td>20/(30/100)=66.7%</td>
+                </tr>
+            </table>
+        </p>
+    </article>
+    <hr>
+{% endblock %}
