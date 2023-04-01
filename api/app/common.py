@@ -2,7 +2,7 @@ from flask import (
     Blueprint, jsonify, g, redirect, request, url_for
 )
 
-from app.db import get_db, db_execute
+from app.db import db_data
 
 bp = Blueprint('common', __name__, url_prefix='/api/common')
 
@@ -25,7 +25,7 @@ def return_all():
 
 @bp.route('/workers')
 def return_workers():
-    return jsonify(db_execute("SELECT id, name, team FROM workers"))
+    return jsonify(db_data()['workers_'])
 
 @bp.route('/teams')
 def return_teams():
