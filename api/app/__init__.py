@@ -19,7 +19,7 @@ def create_app():
     from . import teams
     app.register_blueprint(teams.bp)
 
-    from . import common
-    app.register_blueprint(common.bp)
+    from . import company
+    app.register_blueprint(company.bp)
 
     return app

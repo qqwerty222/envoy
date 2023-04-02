@@ -17,10 +17,9 @@ def db_execute(query):
 
     return db.fetchall()
   
-def db_data():
-    table_workers = db_execute("SELECT * FROM workers")
 
-    data = {}
+def db_data_workers():
+    table = db_execute("SELECT * FROM workers")
 
     # .../api/workers/
     workers_ = {}
@@ -34,7 +33,7 @@ def db_data():
     #       }
     #   }   
     # }
-    for worker in table_workers:
+    for worker in table:
         workers_[f"{worker['id']}"] = { 
             'name':                 f"{worker['name']}", 
             'team':                 f"{worker['team']}",
@@ -43,10 +42,14 @@ def db_data():
             'tasks_finished':       int(f"{worker['tasks_finished']}"),
 
             # count tasks coverage:  finished / ( received / 100 ) = coverage%
-            'tasks_coverage':       f"{ worker['tasks_finished'] // (worker['tasks_received'] / 100)}%"
+            'tasks_coverage(%)':       worker['tasks_finished'] // (worker['tasks_received'] / 100)
         }
-    data['workers_'] = workers_
+    
+    return workers_
 
+def db_data_teams():
+    table = db_execute("SELECT * FROM workers")
+    
     #.../api/teams
     teams_ = {}
     # {
@@ -67,26 +70,68 @@ def db_data():
 
     teams_list = []
 
-    for worker in table_workers:
+    for worker in table:
 
         if worker['team'] not in teams_list: 
             teams_list.append(f"{worker['team']}")
 
-            # create key in teams_ with team name, assign dict with key "workers" to store list, and put current worker in this list
-            teams_[f"{worker['team']}"] = { 'workers': [f"{worker['name']}"] }
-            teams_[f"{worker['team']}"] = { 'size' : "1"}
+            # {'lemon': {}}
+            teams_[f"{worker['team']}"] = {}
+            # {'lemon': { workers: ['frank']}}
+            teams_[f"{worker['team']}"]['workers'] = [f"{worker['name']}"]
+            # {'lemon': { ..., size: 1}}
+            teams_[f"{worker['team']}"]['size'] = 1
+
+            # {'lemon': { ..., tasks: {received: 30, ..., coverage: 50%}}}
+            teams_[f"{worker['team']}"]['tasks'] = { 
+                'received':     worker['tasks_received'],
+                'in_progress':  worker['tasks_in_progress'],
+                'finished':     worker['tasks_finished'],
+                }
 
         else:
-            # if team already exist in teams_, add worker name to it's workers
             teams_[f"{worker['team']}"]['workers'].append(f"{worker['name']}")
-            # teams_[f"{worker['team']}"]['size'] += 1
-        
-            
-    
-    # for team in team_list:
-    #     for worker in table_workers:
-    #         teams_[f"{worker['team']}"] = {}
+            teams_[f"{worker['team']}"]['size'] += 1
+            teams_[f"{worker['team']}"]['tasks']['received']    += worker['tasks_received']
+            teams_[f"{worker['team']}"]['tasks']['in_progress'] += worker['tasks_in_progress']
+            teams_[f"{worker['team']}"]['tasks']['finished']    += worker['tasks_finished']
+
+    # for loop to count task coverage for each team 
+    for team in teams_.values():
+        team['tasks']['coverage(%)'] = team['tasks']['finished'] // (team['tasks']['received'] / 100)
 
     return teams_
 
-print(db_data())
+def db_data_company():
+    table = db_execute("SELECT * FROM workers")
+
+    # .../api/common
+    company_ = {}
+    # {
+    #   teams: 3
+    #   workers:15
+    #   tasks_received: 150
+    #   tasks_in_progress: 30
+    #   tasks_finished: 120
+    #   tasks_covered(%): 80
+
+    company_['size']    = len(db_data_teams())
+    company_['workers'] = 0 
+    company_['tasks'] = { 
+        'received': 0,
+        'in_progress': 0,
+        'finished': 0,
+        'coverage(%)': 0
+    }
+    
+    for team in db_data_teams().values():
+        company_['workers'] += len(team['workers']) 
+        company_['tasks']['received'] += team['tasks']['received']
+        company_['tasks']['in_progress'] += team['tasks']['in_progress']
+        company_['tasks']['finished'] += team['tasks']['finished']
+    
+    company_['tasks']['coverage(%)'] = company_['tasks']['finished'] // (company_['tasks']['received'] / 100)
+
+    return company_
+
+print(db_data_company())
