@@ -23,23 +23,24 @@ services:
 
   api:
     build: api
-    container_name: api-1
-    ports:
-      - 8002:8000
+    deploy:
+      mode: replicated
+      replicas: 2
+      endpoint_mode: dnsrr
     networks:
       - website-net
 
   website:
     build: website
-    container_name: ws-1
-    ports:
-      - 8003:8000
+    deploy:
+      mode: replicated
+      replicas: 2
+      endpoint_mode: dnsrr
     networks:
       - website-net
 
   db:
     image: mysql:latest
-    container_name: db-1
     restart: always
     volumes:
       - ./init_mysql:/docker-entrypoint-initdb.d
