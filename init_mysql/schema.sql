@@ -1,14 +1,12 @@
+CREATE DATABASE company;
+USE company;
+
 CREATE USER 'api'@'%' IDENTIFIED BY 'api_pass';
 GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, REFERENCES ON company.workers TO 'api'@'%';
-GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, REFERENCES ON company.teams TO 'api'@'%';
+
+CREATE USER 'website'@'%' IDENTIFIED BY 'website_pass';
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, REFERENCES ON company.workers TO 'website'@'%';
 FLUSH PRIVILEGES;
-
-CREATE TABLE teams(
-    name varchar(20),
-    UNIQUE(name) 
-);
-
-INSERT INTO teams(name) VALUES ("lemon"), ("orange"), ("banana");
 
 CREATE TABLE workers(
     id int AUTO_INCREMENT,

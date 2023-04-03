@@ -4,4 +4,4 @@ WORKDIR /usr/src/app
 COPY . .
 
 RUN pip install --no-cache-dir -r requirements.txt
-ENTRYPOINT [ "gunicorn", "--bind", "0.0.0.0:8000", "wsgi:app" ]
+ENTRYPOINT [ "flask", "--debug", "run", "--host", "0.0.0.0", "--port", "8000" ]

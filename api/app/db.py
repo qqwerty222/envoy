@@ -5,7 +5,7 @@ from flask import g, current_app
 def get_db():
     if 'db' not in g:
         g.db = pymysql.connect(
-            host="172.17.0.2",
+            host="db",
             user="api",
             password="api_pass",
             database="company",
