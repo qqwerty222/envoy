@@ -2,11 +2,7 @@ version: '3.8'
 
 networks:
   website-net:
-    ipam:
-      driver: default
-      config:
-        - subnet: 172.20.0.0/16
-          gateway: 172.20.0.1
+
     
 services:
   envoy:
@@ -37,7 +33,7 @@ services:
       replicas: 2
       endpoint_mode: dnsrr
     networks:
-      - website-net
+    - website-net
 
   db:
     image: mysql:latest
