@@ -45,13 +45,24 @@ f0f6a9ca61ea   mysql:latest                     5 seconds ago   Up 3 seconds   3
     container with mysql database. Store data for api and website.  
     Run sql script from ./init_mysql in the end of initialization process.
 
-## Usage instruction
+## Config description
 
 ! after compose wait ~10 seconds, mysql container need time before it will be ready for connections.  
 
 Envoy listen port 80, on localhost. It send request to api or website depended on url, "/" for website, "/api" for api. Also envoy distribute requests between different containers of 1 service. In docker compose deploy endpoint_mode is dnsrr. It means that docker service name returns a list of IP addresses (DNS round-robin), and the client connects directly to one of these. [(docs)](https://docs.docker.com/compose/compose-file/deploy/#endpoint_mode)
 
+To prove it you can use dig from envoy container
+```bash
+root@envoy:/# dig website
+...
+;; ANSWER SECTION:
+website.                600     IN      A       172.25.0.4
+website.                600     IN      A       172.25.0.7
+...
+```
+As you can see envoy get 2 ip addresses from docker dns 
 
+## How to use
 Available API endpoints:
 ```bash
 curl localhost/api/status
